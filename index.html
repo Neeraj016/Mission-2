@@ -34,66 +34,103 @@
 
     <title>Tasky</title>
   </head>
-  <body onload="loadInitialTaskCards()">
-    <!-- Modal -->
+  <body onload="loadInitialData()">
+    <div class="add__new__btn__modile__only">
+      
+    </div>
     <div
       class="modal fade"
-      id="exampleModal"
+      id="addNewModal"
       tabindex="-1"
-      aria-labelledby="exampleModalLabel"
+      aria-labelledby="addNewModalLabel"
       aria-hidden="true"
     >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Add New Task</h5>
+            <h5 class="modal-title" id="addNewModalLabel">Add New Task</h5>
             <button
               type="button"
               class="btn-close"
               data-bs-dismiss="modal"
               aria-label="Close"
-            ></button>
+            >
+              <i class="fas fa-times"></i>
+            </button>
           </div>
           <div class="modal-body">
-            <div class="mb-3">
-              <label for="imageurl" class="form-label">Image Url</label>
-              <input
-                type="url"
-                class="form-control"
-                id="imageurl"
-                placeholder="https://images.hello.com/hello.jpg"
-              />
-            </div>
-            <div class="mb-3">
-              <label for="tasktitle" class="form-label">Task Title</label>
-              <input
-                type="text"
-                class="form-control"
-                id="tasktitle"
-                placeholder="API Integration"
-              />
-            </div>
-            <div class="mb-3">
-              <label for="tasktype" class="form-label">Task Type</label>
-              <input
-                type="text"
-                class="form-control"
-                id="tasktype"
-                placeholder="development"
-              />
-            </div>
-            <div class="mb-3">
-              <label for="taskdescription" class="form-label"
-                >Task Description</label
+            <form onsubmit="return false">
+              <div class="mb-3">
+                <label for="imageUrl" class="form-label">Image Url</label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="imageUrl"
+                  placeholder="http://example.com/image.png"
+                />
+              </div>
+              <div class="mb-3">
+                <label for="taskTitle" class="form-label">Task Title</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="taskTitle"
+                  placeholder="Learn Web Dev"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="Tags" class="form-label">Task Type</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="Tags"
+                  placeholder="Work.."
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="taskDescription" class="form-label"
+                  >Task Description</label
+                >
+                <textarea
+                  class="form-control"
+                  id="taskDescription"
+                  placeholder="http://example.com/image.png"
+                  rows="4"
+                  required
+                ></textarea>
+              </div>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
               >
-              <textarea
-                rows="6"
-                class="form-control"
-                id="taskdescription"
-                placeholder="Building an amazing API!"
-              ></textarea>
-            </div>
+                Close
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                onclick="handlesubmit()"
+                data-bs-dismiss="modal"
+              >
+                Save changes
+              </button>
+            </form>
           </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="modal fade"
+      id="showTask"
+      tabindex="-1"
+      aria-labelledby="showTaskLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-body task__modal__body"></div>
           <div class="modal-footer">
             <button
               type="button"
@@ -102,24 +139,14 @@
             >
               Close
             </button>
-            <button
-              type="button"
-              class="btn btn-primary"
-              data-bs-dismiss="modal"
-              onclick="saveChanges()"
-            >
-              Save changes
-            </button>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-md navbar-light bg-light shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
-        <h1 class="navbar-brand fw-bold">
-          <a href="#">Tasky</a>
+        <h1 class="navbar-brand font-weight-700">
+          <a href="index.html">TaskY</a>
         </h1>
         <button
           class="navbar-toggler"
@@ -135,85 +162,50 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Home</a>
+              <a class="nav-link" href="index.html"><strong>home</strong></a>
             </li>
           </ul>
           <button
-            type="button"
-            class="btn btn-primary"
+            class="btn btn-primary ml-auto"
             data-bs-toggle="modal"
-            data-bs-target="#exampleModal"
+            data-bs-target="#addNewModal"
           >
-            <i class="fas fa-plus"></i> Add New
+            <i class="fas fa-plus mr-2"></i>Add new
           </button>
         </div>
       </div>
     </nav>
     <div class="container">
-      <!-- Search bar -->
-      <section class="mt-5">
+      <section class="mt-4">
         <div class="row justify-content-center">
           <div class="col-md-6">
-            <div class="input-group mb-3 shadow">
+            <div class="input-group flex-nowrap shadow-lg">
               <input
-                type="text"
+                type="search"
                 class="form-control"
                 placeholder="Search Task"
                 aria-label="Search Task"
-                aria-describedby="basic-addon2"
-              />
-              <span class="input-group-text" id="basic-addon2"
-                ><i class="fas fa-search"></i
-              ></span>
+                aria-describedby="addon-wrapping"
+                onchange="searchTask.apply(this, arguments)"
+              /><span class="input-group-text" id="addon-wrapping">
+                <i class="fas fa-search"></i>
+              </span>
             </div>
           </div>
         </div>
       </section>
-<!--card-->
-      <section>
-        <div class="row task__container">
-          <div class="col-md-6 col-lg-4">
-            <div class="card">
-              <div class="card-header d-flex justify-content-end gap-2">
-                <button type="button" class="btn btn-outline-success" >
-                  <i class="fas fa-pencil-alt"></i>
-                </button>
-                <button type="button" class="btn btn-outline-danger" >
-                  <i class="fas fa-trash-alt"></i>
-                </button>
-              </div>
-              <img
-          
-                src="https://images.unsplash.com/photo-1612151855475-877969f4a6cc?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8aGQlMjBpbWFnZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80"
-                class="card-img-top"
-                alt="..."
-              />
-              <div class="card-body">
-                <h5 class="card-title"contenteditable="true">Special title treatment</h5>
-                <p class="card-text"contenteditable="true">
-                  With supporting text below as a natural lead-in to additional
-                  content.
-                </p>
-                <span class="badge bg-primary" contenteditable="true">Amazing</span>
-              </div>
-              <div class="card-footer text-muted">
-                <button type="button" class="btn btn-outline-primary float-end"contenteditable="true">
-                  Open Task
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+
+      <section class="mt-4">
+        <div class="row task__contents"></div>
       </section>
     </div>
     <!-- JavaScript Bundle with Popper -->
+    <script src="index.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
       crossorigin="anonymous"
     ></script>
 
-    <!-- Our Js file -->
-    <script src="index.js"></script>
-  </body>
+    </body>
 </html>
